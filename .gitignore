@@ -1,0 +1,9 @@
+*~
+.DS_Store
+.idea/
+.vscode/
+config.json
+firebase-config.json
+/data
+db/goose
+build.sh

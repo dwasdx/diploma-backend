@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  mysql:
+    build:
+      context: deployments/docker/development
+      dockerfile: mysql.docker
+    container_name: shoplist-mysql
+    volumes:
+      - ./deployments/dockerData/db:/var/lib/mysql:rw
+      - ./deployments/dockerData/dump:/dump
+    environment:
+      - MYSQL_DATABASE=shoppinglist
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=123
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "33061:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: shoplist-pma
+    ports:
+      - "8080:80"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      PMA_HOST: mysql
+    depends_on:
+      - mysql
+
+  nginx:
+    build:
+      context: deployments/docker/development
+      dockerfile: nginx.docker
+    container_name: shoplist-nginx
+    volumes:
+      - ./static:/var/www/html
+    ports:
+      - "84:80"
+
+  redis:
+    image: "redis:alpine"
+    container_name: shoplist-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./deployments/dockerData/redis:/var/lib/redis
